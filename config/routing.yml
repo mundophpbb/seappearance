@@ -1,0 +1,7 @@
+mundophpbb_seappearance_font:
+    path: /se-appearance/font/{font_id}.woff2
+    methods: [GET]
+    defaults:
+        _controller: mundophpbb.seappearance.font_controller:download
+    requirements:
+        font_id: 'upload_[a-f0-9]{24}'

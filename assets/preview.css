@@ -1,0 +1,86 @@
+html {
+	height: auto;
+}
+
+#phpbb {
+	margin: 0;
+	padding: 12px;
+	overflow-wrap: anywhere;
+}
+
+#wrap {
+	box-sizing: border-box;
+	width: auto;
+	min-width: 0;
+	margin: 0;
+	padding: 9px;
+	border-radius: 10px;
+}
+
+/*
+ * The preview frame is narrower than 920px, where prosilver SE switches to a white page
+ * without the frame border and shadow. Restore its desktop look so the sample and the
+ * color placeholders match what visitors see on wide screens.
+ */
+html,
+#phpbb {
+	background-color: #ACA8A1;
+}
+
+#phpbb #wrap {
+	border-width: 2px;
+	box-shadow: 0 0 5px 2px #9D9A93, inset 0 3px 18px rgba(100, 100, 100, .25);
+}
+
+#wrap .site-description,
+#wrap .postbody {
+	float: none;
+	width: auto;
+	margin: 0;
+}
+
+#wrap .site-description h1,
+#wrap .site-description p {
+	display: block;
+	margin: 0;
+}
+
+#wrap .site_logo {
+	display: block;
+	width: 86px;
+	height: 30px;
+	margin-bottom: 7px;
+	background-size: contain;
+}
+
+#wrap .sea-example-header,
+#wrap .sea-example-nav,
+#wrap .sea-example-row,
+#wrap .sea-example-post {
+	padding: 7px 9px;
+}
+
+#wrap .sea-example-nav {
+	margin: 5px 0 10px;
+	font-size: 1.1em;
+}
+
+#wrap .sea-example-category .topiclist {
+	margin: 0;
+}
+
+#wrap .sea-example-category .header dt {
+	box-sizing: border-box;
+	float: none;
+	width: auto;
+	margin: 0;
+	padding: 4px 9px;
+}
+
+#wrap .sea-example-row {
+	font-size: 1.1em;
+}
+
+#wrap .sea-example-post {
+	min-height: 0;
+}

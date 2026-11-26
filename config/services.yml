@@ -1,0 +1,37 @@
+services:
+    mundophpbb.seappearance.settings:
+        class: mundophpbb\seappearance\service\settings
+        arguments:
+            - '@config_text'
+            - '@mundophpbb.seappearance.font_catalog'
+        public: true
+
+    mundophpbb.seappearance.font_catalog:
+        class: mundophpbb\seappearance\service\font_catalog
+        arguments:
+            - '@dbal.conn'
+            - '@routing.helper'
+            - '%core.table_prefix%seappearance_fonts'
+        public: true
+
+    mundophpbb.seappearance.font_controller:
+        class: mundophpbb\seappearance\controller\font
+        arguments:
+            - '@mundophpbb.seappearance.font_catalog'
+        public: true
+
+    mundophpbb.seappearance.listener:
+        class: mundophpbb\seappearance\event\listener
+        arguments:
+            - '@mundophpbb.seappearance.settings'
+            - '@template'
+            - '@user'
+        tags:
+            - { name: event.listener }
+
+    mundophpbb.seappearance.presets:
+        class: mundophpbb\seappearance\service\presets
+        arguments:
+            - '@config_text'
+            - '@mundophpbb.seappearance.settings'
+        public: true

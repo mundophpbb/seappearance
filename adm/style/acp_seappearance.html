@@ -1,0 +1,205 @@
+{% INCLUDE 'overall_header.html' %}
+
+<link rel="stylesheet" href="{{ SEA_ASSETS }}acp.css?assets_version={{ T_ASSETS_VERSION }}">
+
+<h1>{{ lang('ACP_SE_APPEARANCE_SETTINGS') }}</h1>
+<p>{{ lang('SEA_INTRO') }}</p>
+
+{% for status in sea_status %}
+<div class="{{ status.S_ERROR ? 'errorbox' : 'warningbox' }}" role="status"><p>{{ status.TEXT }}</p></div>
+{% endfor %}
+{% if SEA_STATUS_TARGETS %}
+<p>{{ lang('SEA_STATUS_TARGETS') }} <strong>{{ SEA_STATUS_TARGETS }}</strong></p>
+{% endif %}
+
+{% if S_SEA_ERRORS %}
+<div class="errorbox" role="alert"><p>{{ lang('SEA_ERRORS') }}</p></div>
+{% endif %}
+{% if SEA_NOTICE %}
+<div class="successbox" role="status"><p>{{ SEA_NOTICE }}</p></div>
+{% endif %}
+
+<form id="sea-form" action="{{ U_ACTION }}" method="post">
+	{# Pressing Enter in any field submits the settings, not the theme buttons below. #}
+	<input type="submit" name="save" value="{{ lang('SUBMIT') }}" class="sea-default-submit" tabindex="-1" aria-hidden="true">
+	<div class="sea-layout">
+		<div class="sea-controls">
+			<fieldset class="sea-card">
+				<legend>{{ lang('SEA_APPLICATION') }}</legend>
+				<label class="sea-toggle"><input id="sea_enabled" name="sea_enabled" type="checkbox" value="1"{% if S_SEA_ENABLED %} checked{% endif %}> {{ lang('SEA_ENABLED') }}</label>
+				<p>{{ lang('SEA_ENABLED_EXPLAIN') }}</p>
+			</fieldset>
+
+			<fieldset class="sea-card" id="sea-themes"
+				data-format="{{ SEA_PRESET_FORMAT|e('html_attr') }}"
+				data-fields="{{ SEA_PRESET_FIELDS|e('html_attr') }}"
+				data-applied="{{ lang('SEA_PRESET_APPLIED')|e('html_attr') }}"
+				data-imported="{{ lang('SEA_PRESET_IMPORTED')|e('html_attr') }}"
+				data-import-error="{{ lang('SEA_PRESET_IMPORT_ERROR')|e('html_attr') }}"
+				data-font-missing="{{ lang('SEA_PRESET_IMPORT_FONT')|e('html_attr') }}"
+				data-exported="{{ lang('SEA_PRESET_EXPORTED')|e('html_attr') }}">
+				<legend>{{ lang('SEA_PRESETS') }}</legend>
+				<p>{{ lang('SEA_PRESETS_HELP') }}</p>
+				{% if SEA_PRESET_ERROR %}
+				<div class="errorbox" role="alert"><p>{{ SEA_PRESET_ERROR }}</p></div>
+				{% endif %}
+
+				<div class="sea-theme-line">
+				<div class="sea-theme-row" data-sea-js hidden>
+					<div class="sea-field">
+						<label for="sea_theme">{{ lang('SEA_PRESET_CHOOSE') }}</label>
+						<select id="sea_theme">
+							<optgroup label="{{ lang('SEA_PRESETS_BUILTIN')|e('html_attr') }}">
+								{% for preset in sea_builtin_presets %}
+								<option data-values="{{ preset.VALUES|e('html_attr') }}">{{ preset.LABEL|e('html') }}</option>
+								{% endfor %}
+							</optgroup>
+							{% if sea_saved_presets %}
+							<optgroup label="{{ lang('SEA_PRESETS_SAVED')|e('html_attr') }}">
+								{% for preset in sea_saved_presets %}
+								<option data-values="{{ preset.VALUES|e('html_attr') }}" data-name="{{ preset.LABEL|e('html_attr') }}" data-missing-font="{{ preset.S_MISSING_FONT ? 1 : 0 }}">{{ preset.LABEL|e('html') }}</option>
+								{% endfor %}
+							</optgroup>
+							{% endif %}
+						</select>
+					</div>
+					<button type="button" class="button2" id="sea-theme-apply">{{ lang('SEA_PRESET_APPLY') }}</button>
+				</div>
+
+				<div class="sea-theme-row">
+					<div class="sea-field">
+						<label for="sea_preset_name">{{ lang('SEA_PRESET_NAME') }}</label>
+						<input type="text" id="sea_preset_name" name="sea_preset_name" maxlength="{{ SEA_PRESET_MAX_NAME }}" value="{{ SEA_PRESET_NAME|e('html_attr') }}" autocomplete="off" aria-describedby="sea-preset-name-help">
+					</div>
+					<input type="submit" name="save_preset" class="button2" value="{{ lang('SEA_PRESET_SAVE') }}">
+				</div>
+				</div>
+				<p id="sea-preset-name-help" class="sea-hint">{{ lang('SEA_PRESET_SAVE_HELP') }}</p>
+
+				<div class="sea-theme-row sea-theme-files" data-sea-js hidden>
+					<button type="button" class="button2" id="sea-theme-export">{{ lang('SEA_PRESET_EXPORT') }}</button>
+					<button type="button" class="button2" id="sea-theme-import">{{ lang('SEA_PRESET_IMPORT') }}</button>
+					<input type="file" id="sea-theme-file" accept=".json,application/json" hidden>
+				</div>
+				<p id="sea-theme-status" class="sea-theme-status" role="status" aria-live="polite"></p>
+
+				{% if sea_saved_presets %}
+				<h3 class="sea-theme-list-title">{{ lang('SEA_PRESETS_SAVED') }}</h3>
+				<ul class="sea-theme-list">
+					{% for preset in sea_saved_presets %}
+					<li>
+						<span>
+							<strong>{{ preset.LABEL|e('html') }}</strong>
+							{% if preset.S_MISSING_FONT %}<br><small class="sea-theme-warning">{{ lang('SEA_PRESET_MISSING_FONT') }}</small>{% endif %}
+						</span>
+						<button type="submit" name="remove_preset" value="{{ preset.KEY }}" class="button2" formnovalidate aria-label="{{ lang('SEA_PRESET_REMOVE_NAMED', preset.LABEL)|e('html_attr') }}">{{ lang('SEA_PRESET_REMOVE') }}</button>
+					</li>
+					{% endfor %}
+				</ul>
+				{% endif %}
+			</fieldset>
+
+			<fieldset class="sea-card">
+				<legend>{{ lang('SEA_COLORS') }}</legend>
+				<p id="sea-colors-help">{{ lang('SEA_COLORS_HELP') }}</p>
+				<div class="sea-field-grid">
+					{% for field in sea_colors %}
+					<div class="sea-field">
+						<label for="sea_{{ field.KEY }}">{{ field.LABEL }}</label>
+						<div class="sea-color">
+							<input type="color" value="{{ field.VALUE ?: field.DEFAULT }}" data-sea-picker="{{ field.KEY }}" aria-label="{{ field.LABEL }}" hidden>
+							<input id="sea_{{ field.KEY }}" name="sea_{{ field.KEY }}" type="text" value="{{ field.VALUE }}" placeholder="{{ field.DEFAULT }}" maxlength="7" pattern="#[a-fA-F0-9]&#123;6&#125;" spellcheck="false" autocomplete="off" data-sea-color="{{ field.KEY }}" aria-describedby="sea-colors-help"{% if field.S_ERROR %} aria-invalid="true"{% endif %}>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+			</fieldset>
+
+			<fieldset class="sea-card">
+				<legend>{{ lang('SEA_TYPOGRAPHY') }}</legend>
+				<p><a href="#sea-custom-fonts">{{ lang('SEA_CUSTOM_FONTS') }}</a></p>
+				<div class="sea-field-grid">
+					{% for field in sea_fonts %}
+					<div class="sea-field">
+						<label for="sea_{{ field.KEY }}">{{ field.LABEL }}</label>
+						<select id="sea_{{ field.KEY }}" name="sea_{{ field.KEY }}" data-sea-font="{{ field.KEY }}"{% if field.S_ERROR %} aria-invalid="true"{% endif %}>
+							<option value="">{{ lang('SEA_STYLE_DEFAULT') }}</option>
+							{% for option in field.options %}
+							<option value="{{ option.KEY }}" data-stack="{{ option.STACK|e('html_attr') }}"{% if option.S_SELECTED %} selected{% endif %}>{{ option.LABEL|e('html') }}</option>
+							{% endfor %}
+						</select>
+					</div>
+					{% endfor %}
+					{% for field in sea_sizes %}
+					<div class="sea-field">
+						<label for="sea_{{ field.KEY }}">{{ field.LABEL }}</label>
+						<input id="sea_{{ field.KEY }}" name="sea_{{ field.KEY }}" type="number" step="1" min="{{ field.MIN }}" max="{{ field.MAX }}" value="{{ field.VALUE }}" placeholder="{{ field.DEFAULT }}" data-sea-size="{{ field.KEY }}"{% if field.S_ERROR %} aria-invalid="true"{% endif %}>
+					</div>
+					{% endfor %}
+				</div>
+			</fieldset>
+		</div>
+
+		<aside class="sea-preview-column" aria-labelledby="sea-preview-title">
+			<h2 id="sea-preview-title">{{ lang('SEA_PREVIEW') }}</h2>
+			<p>{{ lang('SEA_PREVIEW_HELP') }}</p>
+			{% set sea_preview_document %}{% include 'acp_seappearance_preview.html' %}{% endset %}
+			<iframe id="sea-preview" class="sea-preview" title="{{ lang('SEA_PREVIEW') }}" sandbox="allow-same-origin" srcdoc="{{ sea_preview_document|e('html_attr') }}"></iframe>
+		</aside>
+	</div>
+
+	<fieldset class="submit-buttons sea-actions">
+		<input type="submit" name="save" value="{{ lang('SUBMIT') }}" class="button1">
+		<input type="submit" name="restore" value="{{ lang('SEA_RESTORE') }}" class="button2" formnovalidate>
+		{{ S_FORM_TOKEN }}
+	</fieldset>
+</form>
+
+<section id="sea-custom-fonts" class="sea-font-panel" aria-labelledby="sea-custom-fonts-title">
+	<h2 id="sea-custom-fonts-title">{{ lang('SEA_CUSTOM_FONTS') }}</h2>
+	<p id="sea-upload-help">{{ lang('SEA_FONT_UPLOAD_HELP') }}</p>
+	{% if S_SEA_FONT_ADDED %}
+	<div class="successbox" role="status"><p>{{ lang('SEA_FONT_ADDED') }}</p></div>
+	{% endif %}
+	{% if SEA_FONT_ERROR %}
+	<div class="errorbox" role="alert"><p>{{ SEA_FONT_ERROR }}</p></div>
+	{% endif %}
+
+	<form id="sea-font-upload" action="{{ U_ACTION }}#sea-custom-fonts" method="post" enctype="multipart/form-data" aria-describedby="sea-upload-help"
+		data-max-bytes="{{ SEA_FONT_MAX_SIZE }}" data-size-error="{{ lang('SEA_FONT_ERROR_SIZE')|e('html_attr') }}" data-format-error="{{ lang('SEA_FONT_ERROR_FORMAT')|e('html_attr') }}">
+		<div class="sea-font-fields">
+			<div class="sea-field">
+				<label for="sea_font_name">{{ lang('SEA_FONT_NAME') }}</label>
+				<input type="text" id="sea_font_name" name="sea_font_name" maxlength="{{ SEA_FONT_MAX_NAME }}" value="{{ SEA_FONT_NAME }}" required>
+			</div>
+			<div class="sea-field">
+				<label for="sea_font_file">{{ lang('SEA_FONT_FILE') }}</label>
+				<input type="file" id="sea_font_file" name="sea_font_file" accept=".woff2,font/woff2" required>
+			</div>
+			<input type="submit" name="upload_font" class="button1" value="{{ lang('SEA_FONT_ADD') }}">
+		</div>
+		{{ S_FORM_TOKEN }}
+	</form>
+
+	{% if sea_custom_fonts %}
+	<ul class="sea-font-list">
+		{% for font in sea_custom_fonts %}
+		<li>
+			<strong>{{ font.LABEL|e('html') }}</strong>
+			{% if font.S_SELECTED %}
+			<span>{{ lang('SEA_FONT_SELECTED') }}</span>
+			{% else %}
+			<form action="{{ U_ACTION }}#sea-custom-fonts" method="post">
+				<input type="hidden" name="remove_font" value="{{ font.KEY }}">
+				<input type="submit" class="button2" value="{{ lang('SEA_FONT_REMOVE') }}" aria-label="{{ lang('SEA_FONT_REMOVE_NAMED', font.LABEL)|e('html_attr') }}">
+				{{ S_FORM_TOKEN }}
+			</form>
+			{% endif %}
+		</li>
+		{% endfor %}
+	</ul>
+	{% endif %}
+</section>
+
+<script defer src="{{ SEA_ASSETS }}acp.js?assets_version={{ T_ASSETS_VERSION }}"></script>
+{% INCLUDE 'overall_footer.html' %}

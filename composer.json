@@ -1,0 +1,39 @@
+{
+    "name": "mundophpbb/seappearance",
+    "type": "phpbb-extension",
+    "description": "Customize colors and typography for the prosilver Special Edition (prosilver_se) style from the phpBB Administration Control Panel.",
+    "homepage": "https://mundophpbb.com.br",
+    "version": "1.1.0",
+    "time": "2026-11-25",
+    "keywords": [
+        "phpbb",
+        "extension",
+        "prosilver",
+        "appearance",
+        "colors",
+        "typography"
+    ],
+    "license": "GPL-2.0-only",
+    "authors": [
+        {
+            "name": "MundophpBB",
+            "homepage": "https://mundophpbb.com.br",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=7.2"
+    },
+    "extra": {
+        "display-name": "prosilver SE Appearance",
+        "soft-require": {
+            "phpbb/phpbb": ">=3.3.0,<3.4.0@dev"
+        },
+        "version-check": {
+            "host": "mundophpbb.com.br",
+            "directory": "/updates",
+            "filename": "seappearance.json",
+            "ssl": true
+        }
+    }
+}

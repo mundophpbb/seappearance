@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="{{ S_USER_LANG }}" dir="{{ S_CONTENT_DIRECTION }}">
+<head>
+	<meta charset="utf-8">
+	{% for sheet in ['normalize', 'common', 'links', 'content', 'colours'] %}
+	<link rel="stylesheet" href="{{ SEA_PREVIEW_PARENT }}/{{ sheet }}.css?assets_version={{ T_ASSETS_VERSION }}">
+	{% endfor %}
+	{% if SEA_PREVIEW_STYLE %}
+	<link rel="stylesheet" href="{{ SEA_PREVIEW_STYLE }}/stylesheet.css?assets_version={{ T_ASSETS_VERSION }}">
+	{% endif %}
+	<link rel="stylesheet" href="{{ SEA_MONTSERRAT_CSS }}?assets_version={{ T_ASSETS_VERSION }}">
+	<link rel="stylesheet" href="{{ SEA_ASSETS }}preview.css?assets_version={{ T_ASSETS_VERSION }}">
+	{% if SEA_CUSTOM_FONT_CSS %}
+	<style>{{ SEA_CUSTOM_FONT_CSS|raw }}</style>
+	{% endif %}
+</head>
+<body id="phpbb">
+	<div id="wrap" class="wrap">
+		<div class="headerbar sea-example-header">
+			<div class="site-description">
+				<span class="site_logo" aria-hidden="true"></span>
+				<h1>{{ lang('SEA_SAMPLE_BOARD') }}</h1>
+				<p>{{ lang('SEA_SAMPLE_DESC') }}</p>
+			</div>
+		</div>
+		<div class="navbar sea-example-nav">{{ lang('SEA_SAMPLE_NAV') }}</div>
+		<div class="forabg sea-example-category">
+			<ul class="topiclist">
+				<li class="header"><dl><dt>{{ lang('SEA_SAMPLE_CATEGORY') }}</dt></dl></li>
+			</ul>
+			<ul class="topiclist forums">
+				<li class="row sea-example-row">
+					<a href="#wrap" class="forumtitle sea-example-link">{{ lang('SEA_SAMPLE_FORUM') }}</a>
+					<div>{{ lang('SEA_SAMPLE_FORUM_DESC') }}</div>
+				</li>
+			</ul>
+		</div>
+		<div class="postbody"><div class="content sea-example-post">{{ lang('SEA_SAMPLE_POST') }}</div></div>
+	</div>
+</body>
+</html>
